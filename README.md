@@ -10,6 +10,25 @@ python -m python_ai.classifier
 python -m pytest -q
 ```
 
+## Use the classifier for inference
+
+The reusable API accepts one four-feature observation or a batch. Features must be ordered as sepal length, sepal width, petal length, and petal width (centimetres).
+
+```python
+from python_ai.classifier import predict_iris
+
+species = predict_iris([5.1, 3.5, 1.4, 0.2])
+print(species)  # ['setosa']
+
+batch = [
+    [5.1, 3.5, 1.4, 0.2],
+    [6.0, 2.9, 4.5, 1.5],
+]
+print(predict_iris(batch))
+```
+
+The inference model is fitted on the complete bundled Iris dataset and cached by random seed. This convenience API demonstrates prediction; use `evaluate_iris()` for a separate stratified hold-out accuracy estimate. Invalid feature counts, non-numeric values, booleans, NaN, and infinity are rejected before reaching scikit-learn.
+
 ## Project rules
 
 - Prefer small, reproducible examples over framework-heavy abstractions.

@@ -61,19 +61,27 @@ def _normalize_samples(
     if not values:
         raise ValueError("at least one sample is required")
 
-    if all(isinstance(value, Real) and not isinstance(value, bool) for value in values):
+    first_value = values[0]
+    if isinstance(first_value, (str, bytes)):
         rows = [values]
     else:
-        rows = []
-        for row_index, row in enumerate(values, start=1):
-            if isinstance(row, (str, bytes)):
-                raise ValueError(f"sample {row_index} must be a sequence of numeric features")
-            try:
-                rows.append(list(row))
-            except TypeError as exc:
-                raise ValueError(
-                    f"sample {row_index} must be a sequence of numeric features"
-                ) from exc
+        try:
+            iter(first_value)
+        except TypeError:
+            rows = [values]
+        else:
+            rows = []
+            for row_index, row in enumerate(values, start=1):
+                if isinstance(row, (str, bytes)):
+                    raise ValueError(
+                        f"sample {row_index} must be a sequence of numeric features"
+                    )
+                try:
+                    rows.append(list(row))
+                except TypeError as exc:
+                    raise ValueError(
+                        f"sample {row_index} must be a sequence of numeric features"
+                    ) from exc
 
     normalized: list[list[float]] = []
     for row_index, row in enumerate(rows, start=1):
